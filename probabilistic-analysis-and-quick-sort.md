@@ -48,13 +48,44 @@ function Function1(A[], n) {
 We can use the following formula:
 
 $$
-ET(n)=\Pr(A)\,*\,E(T(n)\,|\,A)\,+\,\Pr(Not\,A)\,*\,E(T(n)\,|\,Not\;A)
+ET(n)=
+\Pr(A)\,
+*\,
+E(T(n)\,|\,A)\,
++\,
+\Pr(Not\,A)\,
+*\,
+E(T(n)\,|\,Not\;A)
 $$
+
+$$
+\text{OR}
+$$
+
+$$
+ET(n)=
+\Pr(A)\,
+*\,
+E(T(n) \mid A)\,
++\,
+\Pr(Not\,A)\,
+*\,
+E(T(n) \mid \neg A)
+$$
+
+
 
 From the formula, we can easily see that
 
 $$
-ET(n)=\frac{1}{4}\,*\,T(\,\frac{n}{2}\,)\,+\,(1\,-\,\frac{1}{4})\,*\,T(\,\frac{n}{3}\,)
+ET(n)=
+\frac{1}{4}\,
+*\,
+T(\,\frac{n}{2}\,)\,
++\,
+(1\,-\,\frac{1}{4})\,
+*\,
+T(\,\frac{n}{3}\,)
 $$
 
 ### 1.2 Random if without recursion
@@ -92,14 +123,6 @@ We can use the following formula (Same as in Section 1.1):
 
 $$
 ET(n)=\Pr(A)\,*\,E(T(n) \mid A)\,+\,\Pr(Not\,A)\,*\,E(T(n) \mid \neg A)
-$$
-
-$$
-\text{OR}
-$$
-
-$$
-ET(n)=\Pr(A)\,*\,E(T(n) \mid A)\,+\,\Pr(Not\,A)\,*\,E(T(n) \mid NOT\, A)
 $$
 
 $$
@@ -204,7 +227,7 @@ function Function4(A[], n) {
 }
 ```
 
-For each iteration of the outer loop, we first analyze the time complexity of the inner loop.
+For each iteration of the outer loop, we first analyze the time complexity of the inner loop. (Same as what we did in Section 2.1)
 
 We can use the formula:
 
@@ -244,9 +267,9 @@ $$
 = \sum_{i=1}^{n}\Theta(i^2) = \Theta(n^3)
 $$
 
-### **3. Random-sized recursive call ( i.e. Number axis problem )**
+### **3. Random-sized recursive call ( i.e. Number Line problem )**
 
-Method: *First identify the best and worst cases. Then use a number line to divide the possible values of k into ranges, and use the appropriate best- or worst-case bound in each range to determine the overall time complexity.*
+Method: *First identify the best and worst cases. Then use a number line to divide the possible values of k into ranges, and use the appropriate worst-case bound in each range to determine the overall time complexity.*
 
 ```text
 1.  Base case and non-recursive work
@@ -279,11 +302,11 @@ function Function5(A[], n) {
 
 We use the following steps:
 
-1. Substitute the minimum and maximum possible values of $k$ to identify the worst-case recursive-call sizes.
-2. Find the midpoint where the two recursive calls have the same size.
+1. Substitute the minimum and maximum possible values of $k$ and compare the resulting recursive-call sizes to identify the best and worst cases.
+2. If the minimum and maximum values of $k$ produce the same case, also test the midpoint $$ k=\frac{k_{\min}+k_{\max}}{2} $$ to determine whether it gives the best case.
 3. Divide the possible values of $k$ into several ranges using the critical points on the number line.
 4. For each range, choose the value of $k$ that gives the worst recursive-call sizes, then use these cases to construct the upper bound.
-5. The process for finding the lower bound is similar, but we use the best case instead.
+5. For the lower bound, use the best-case recursive-call sizes.
 
 **Solution:**
 
@@ -353,7 +376,7 @@ For the upper bound, choose the worst recursive-call sizes in each range.
 Therefore,
 
 $$
-ET(n) \le \Theta(n^2)
+ET(n) \le C_1n^2
 +
 \frac{1}{4}\left[ET(5)+ET(n-5)\right]
 +
@@ -373,7 +396,7 @@ Combining identical terms gives
 $$
 ET(n)
 \le
-\Theta(n^2)
+C_1n^2
 +
 \frac{1}{2}\left[ET(5)+ET(n-5)\right]
 +
@@ -382,7 +405,7 @@ $$
 
 Since $ET(5)=\Theta(1)$, it can be absorbed into the other asymptotic terms.
 
-*For the upper bound*, we can also replace $ET(n-5)$ by $ET(n)$ because
+***For the upper bound***, we can also replace $ET(n-5)$ by $ET(n)$ because
 
 $$
 n-5<n
@@ -397,13 +420,13 @@ $$
 Thus,
 
 $$
-ET(n) \le \Theta(n^2)
+ET(n) \le C_2n^2
 +
 \frac{1}{2}ET(n)
 +
 \frac{1}{2}ET(n/4)
 +
-\frac{1}{2}ET(3n/4).
+\frac{1}{2}ET(3n/4)
 $$
 
 Move $\frac{1}{2}ET(n)$ to the left-hand side:
@@ -411,11 +434,11 @@ Move $\frac{1}{2}ET(n)$ to the left-hand side:
 $$
 ET(n)-\frac{1}{2}ET(n)
 \le
-\Theta(n^2)
+C_2n^2
 +
 \frac{1}{2}ET(n/4)
 +
-\frac{1}{2}ET(3n/4).
+\frac{1}{2}ET(3n/4)
 $$
 
 Therefore,
@@ -423,26 +446,26 @@ Therefore,
 $$
 \frac{1}{2}ET(n)
 \le
-\Theta(n^2)
+C_2n^2
 +
 \frac{1}{2}ET(n/4)
 +
-\frac{1}{2}ET(3n/4).
+\frac{1}{2}ET(3n/4)
 $$
 
 Multiplying both sides by $2$ gives
 
 $$
-ET(n) \le ET(n/4) + ET(3n/4) + \Theta(n^2).
+ET(n) \le ET(n/4) + ET(3n/4) + Cn^2
 $$
 
-Therefore,
+Therefore, using a recursion tree, we obtain
 
 $$
 ET(n)=O(n^2).
 $$
 
-*For the Lower Bound*, the expected running time cannot be better than the best possible recursive split.
+***For the Lower Bound***, the expected running time cannot be better than the best possible recursive split.
 
 The best split occurs at
 
@@ -457,8 +480,7 @@ Therefore, the best-case recurrence is
 $$
 T(n) =
 2T(n/2)
-+
-\Theta(n^2).
++ Cn^2.
 $$
 
 This recurrence gives
@@ -530,22 +552,6 @@ $$
 \Pr(k\ne42)=\frac{n-1}{n}.
 $$
 
-The best case occurs when
-
-$$
-k=42
-$$
-
-on the first random choice.
-
-Therefore,
-
-$$
-T_{\text{best}}(n)=\Theta(\sqrt{n}).
-$$
-
-In the worst case, $k$ may never equal $42$, so the loop has no finite deterministic worst-case bound.
-
 For the expected case, let $X$ be the number of times the loop repeats before termination.
 
 The running time can be written as
@@ -565,6 +571,15 @@ E(X)\cdot c\sqrt{n}.
 $$
 
 To find $E(X)$, use
+
+$$
+E(X)
+=
+\sum_{i=0}^{\infty}
+i\Pr(X=i).
+$$
+
+Then,
 
 $$
 E(X) = \sum_{i=1}^{\infty}\Pr(X\ge i).
