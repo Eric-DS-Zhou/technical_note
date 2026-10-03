@@ -164,9 +164,7 @@ $$
 We should first find t(k=q), which is the running time of the loop controlled by k.
 
 $$
-t(k=q)
-=
-\left(\sum_{i=1}^{q} i^2\,C\right)
+t(k=q) = \left(\sum_{i=1}^{q} i^2\,C\right)
 $$
 
 Since $k$ is uniformly random,
