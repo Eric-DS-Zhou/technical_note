@@ -573,9 +573,7 @@ $$
 For the loop to repeat at least $i$ times, the terminating condition must fail repeatedly. Thus,
 
 $$
-\Pr(X\ge i)
-=
-\left(\frac{n-1}{n}\right)^i.
+\Pr(X\ge i) = \left(\frac{n-1}{n}\right)^i.
 $$
 
 Therefore,
