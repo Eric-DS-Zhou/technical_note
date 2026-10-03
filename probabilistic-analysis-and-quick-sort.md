@@ -1,12 +1,12 @@
-# Probabilistic Analysis & Quick Sort
+# Probabilistic Analysis and Quick Sort Notes
 
 ## Introduction
 
-This technical note summarize the tool and logic to use in probabilistic analysis.
+This technical note summarizes the tools and logic used in probabilistic analysis.
 
 ## Type of probabilistic analysis
 
-There are 4 different versions about the probabilistic analysis
+There are four main types of probabilistic analysis.
 
 - Random if
   - With Recursion
@@ -14,12 +14,12 @@ There are 4 different versions about the probabilistic analysis
 - Random for
   - single random loop
   - Random loop inside an outer loop
-- Random-sized recursive call ( i.e. Number axis problem )
+- Random-sized recursive call ( i.e. Number line problem )
 - Loop that randomly terminates
 
 ### **1. Random if**
 
-Method: *Find the probability of both condition and their T(n), then use the fomula*
+Method: *Find the probabilities of both conditions and their corresponding T(n), then use the formula.*
 
 ### 1.1 Random if with recursion
 
@@ -45,13 +45,13 @@ function Function1(A[], n) {
 }
 ```
 
-We can use the following fomula:
+We can use the following formula:
 
 $$
 ET(n)=\Pr(A)\,*\,E(T(n)\,|\,A)\,+\,\Pr(Not\,A)\,*\,E(T(n)\,|\,Not\;A)
 $$
 
-From the fomula, we can easily get that
+From the formula, we can easily see that
 
 $$
 ET(n)=\frac{1}{4}\,*\,T(\,\frac{n}{2}\,)\,+\,(1\,-\,\frac{1}{4})\,*\,T(\,\frac{n}{3}\,)
@@ -88,7 +88,7 @@ function Function2(A[], n) {
 }
 ```
 
-We can use the following formula (Same as 1.1):
+We can use the following formula (Same as in Section 1.1):
 
 $$
 ET(n)=\Pr(A)\,*\,E(T(n) \mid A)\,+\,\Pr(Not\,A)\,*\,E(T(n) \mid \neg A)
@@ -130,7 +130,7 @@ $$
 
 ### **2. Random for**
 
-Method: *First handle the overall T(n) with the random k and then plug in the result to the for loop if there is one.*
+Method: *First analyze the running time for a fixed random value of k, and then incorporate the result into the outer loop if there is one.*
 
 ### 2.1 single random loop
 
@@ -161,8 +161,7 @@ $$
 ET(n)=\sum_{q=1}^{n}\Pr(k=q)t(k=q)
 $$
 
-
-We should get $$ t(k=q)$$ first. It is the loop under the k
+We should first find t(k=q), which is the running time of the loop controlled by k.
 
 $$
 t(k=q)
@@ -207,7 +206,7 @@ function Function4(A[], n) {
 }
 ```
 
-For each iteration of the outer loop, we solve the time complexity of inner loop first.
+For each iteration of the outer loop, we first analyze the time complexity of the inner loop.
 
 We can use the formula:
 
@@ -237,7 +236,7 @@ $$
 = \frac{1}{i}\Theta(i^3) = \Theta(i^2)
 $$
 
-Then, we can find the overall time complexity
+Then, we can determine the overall time complexity.
 
 $$
 ET(n) = \sum_{i=1}^{n}ET_i(n)
@@ -249,10 +248,10 @@ $$
 
 ### **3. Random-sized recursive call ( i.e. Number axis problem )**
 
-Method: *First figure out the best and the worst cases, then use the number axis to divide the condition, then use the best/worst case in the division to get the overall time complexity.*
+Method: *First identify the best and worst cases. Then use a number line to divide the possible values of k into ranges, and use the appropriate best- or worst-case bound in each range to determine the overall time complexity.*
 
 ```text
-1.  bunch of base case and normal loop
+1.  Base case and non-recursive work
 2.  Do ()
 3.      k = Random(n)
 4.      Make recursive call of size f(k).
@@ -286,7 +285,7 @@ We use the following steps:
 2. Find the midpoint where the two recursive calls have the same size.
 3. Divide the possible values of $k$ into several ranges using the critical points on the number line.
 4. For each range, choose the value of $k$ that gives the worst recursive-call sizes, then use these cases to construct the upper bound.
-5. The lower bound is the same. Just use best case
+5. The process for finding the lower bound is similar, but we use the best case instead.
 
 **Solution:**
 
@@ -389,7 +388,7 @@ $$
 
 Since $ET(5)=\Theta(1)$, it can be absorbed into the other asymptotic terms.
 
-*For the upper bound*, We can also replace $ET(n-5)$ by $ET(n)$ because
+*For the upper bound*, we can also replace $ET(n-5)$ by $ET(n)$ because
 
 $$
 n-5<n
@@ -457,9 +456,7 @@ $$
 ET(n)=O(n^2).
 $$
 
-*For the Lower Bound*
-
-The expected running time cannot be better than the best possible recursive split.
+*For the Lower Bound*, the expected running time cannot be better than the best possible recursive split.
 
 The best split occurs at
 
