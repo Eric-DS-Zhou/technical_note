@@ -294,9 +294,7 @@ $$ k=1 \quad\Rightarrow\quad T(5)+T(n-5) $$
 and
 
 $$
-k=\frac{n}{5}-1
-\quad\Rightarrow\quad
-T(n-5)+T(5).
+k=\frac{n}{5}-1 \quad\Rightarrow\quad T(n-5)+T(5).
 $$
 
 Both endpoints give the same unbalanced recursive-call sizes.
@@ -355,9 +353,7 @@ For the upper bound, choose the worst recursive-call sizes in each range.
 Therefore,
 
 $$
-ET(n)
-\le
-\Theta(n^2)
+ET(n) \le \Theta(n^2)
 +
 \frac{1}{4}\left[ET(5)+ET(n-5)\right]
 +
@@ -401,9 +397,7 @@ $$
 Thus,
 
 $$
-ET(n)
-\le
-\Theta(n^2)
+ET(n) \le \Theta(n^2)
 +
 \frac{1}{2}ET(n)
 +
@@ -439,13 +433,7 @@ $$
 Multiplying both sides by $2$ gives
 
 $$
-ET(n)
-\le
-ET(n/4)
-+
-ET(3n/4)
-+
-\Theta(n^2).
+ET(n) \le ET(n/4) + ET(3n/4) + \Theta(n^2).
 $$
 
 Therefore,
@@ -467,8 +455,7 @@ which gives two recursive calls of size $n/2$.
 Therefore, the best-case recurrence is
 
 $$
-T(n)
-=
+T(n) =
 2T(n/2)
 +
 \Theta(n^2).
@@ -564,9 +551,7 @@ For the expected case, let $X$ be the number of times the loop repeats before te
 The running time can be written as
 
 $$
-T(n)
-=
-c\sqrt{n}
+T(n) = c\sqrt{n}
 +
 X\cdot c\sqrt{n}.
 $$
@@ -574,9 +559,7 @@ $$
 Therefore,
 
 $$
-ET(n)
-=
-c\sqrt{n}
+ET(n) = c\sqrt{n}
 +
 E(X)\cdot c\sqrt{n}.
 $$
@@ -584,9 +567,7 @@ $$
 To find $E(X)$, use
 
 $$
-E(X)
-=
-\sum_{i=1}^{\infty}\Pr(X\ge i).
+E(X) = \sum_{i=1}^{\infty}\Pr(X\ge i).
 $$
 
 For the loop to repeat at least $i$ times, the terminating condition must fail repeatedly. Thus,
@@ -600,54 +581,43 @@ $$
 Therefore,
 
 $$
-E(X)
-=
-\sum_{i=1}^{\infty}
+E(X) = \sum_{i=1}^{\infty}
 \left(\frac{n-1}{n}\right)^i.
 $$
 
 Using the geometric-series formula,
 
 $$
-\sum_{i=1}^{\infty}r^i
-=
+\sum_{i=1}^{\infty}r^i =
 \frac{r}{1-r},
 $$
 
 we get
 
 $$
-E(X)
-=
-\frac{\frac{n-1}{n}}
+E(X) = \frac{\frac{n-1}{n}}
 {1-\frac{n-1}{n}}.
 $$
 
 Since
 
 $$
-1-\frac{n-1}{n}
-=
+1-\frac{n-1}{n} =
 \frac{1}{n},
 $$
 
 we have
 
 $$
-E(X)
-=
+E(X) =
 \frac{n-1}{n}
-\cdot n
-=
-n-1.
+\cdot n = n-1.
 $$
 
 Thus,
 
 $$
-ET(n)
-=
-c\sqrt{n}
+ET(n) = c\sqrt{n}
 +
 (n-1)c\sqrt{n}.
 $$
@@ -655,8 +625,7 @@ $$
 Therefore,
 
 $$
-ET(n)
-=
+ET(n) =
 cn\sqrt{n}.
 $$
 
