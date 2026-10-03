@@ -499,6 +499,178 @@ $$
 
 ### **4. Loop that randomly terminates**
 
+```text
+1. Do some work
+2. repeat
+3.     k = Random(n)
+4.     Do some work
+5. until Boolean condition on k is true
+```
+
+For this type of problem, the loop terminates only when a random condition is satisfied.
+
+We let $X$ be the number of times the loop repeats before termination.
+
+For example:
+
+```java
+function Function6(A[], n) {
+    x = 0;
+
+    repeat {
+        k = Random(n);
+
+        for (i = 1 to sqrt(n)) {
+            x = x + A[i];
+        }
+
+    } until (k == 42);
+
+    return x;
+}
+```
+
+The loop terminates when
+
+$$
+k=42.
+$$
+
+Since $k$ is uniformly random from $1$ to $n$,
+
+$$
+\Pr(k=42)=\frac{1}{n}
+$$
+
+and
+
+$$
+\Pr(k\ne42)=\frac{n-1}{n}.
+$$
+
+The best case occurs when
+
+$$
+k=42
+$$
+
+on the first random choice.
+
+Therefore,
+
+$$
+T_{\text{best}}(n)=\Theta(\sqrt{n}).
+$$
+
+In the worst case, $k$ may never equal $42$, so the loop has no finite deterministic worst-case bound.
+
+For the expected case, let $X$ be the number of times the loop repeats before termination.
+
+The running time can be written as
+
+$$
+T(n)
+=
+c\sqrt{n}
++
+X\cdot c\sqrt{n}.
+$$
+
+Therefore,
+
+$$
+ET(n)
+=
+c\sqrt{n}
++
+E(X)\cdot c\sqrt{n}.
+$$
+
+To find $E(X)$, use
+
+$$
+E(X)
+=
+\sum_{i=1}^{\infty}\Pr(X\ge i).
+$$
+
+For the loop to repeat at least $i$ times, the terminating condition must fail repeatedly. Thus,
+
+$$
+\Pr(X\ge i)
+=
+\left(\frac{n-1}{n}\right)^i.
+$$
+
+Therefore,
+
+$$
+E(X)
+=
+\sum_{i=1}^{\infty}
+\left(\frac{n-1}{n}\right)^i.
+$$
+
+Using the geometric-series formula,
+
+$$
+\sum_{i=1}^{\infty}r^i
+=
+\frac{r}{1-r},
+$$
+
+we get
+
+$$
+E(X)
+=
+\frac{\frac{n-1}{n}}
+{1-\frac{n-1}{n}}.
+$$
+
+Since
+
+$$
+1-\frac{n-1}{n}
+=
+\frac{1}{n},
+$$
+
+we have
+
+$$
+E(X)
+=
+\frac{n-1}{n}
+\cdot n
+=
+n-1.
+$$
+
+Thus,
+
+$$
+ET(n)
+=
+c\sqrt{n}
++
+(n-1)c\sqrt{n}.
+$$
+
+Therefore,
+
+$$
+ET(n)
+=
+cn\sqrt{n}.
+$$
+
+So,
+
+$$
+\boxed{ET(n)=\Theta(n^{3/2})}
+$$
+
 ## Reference List
 
 1. *"CSE2331_Types_of_Probabilistic_Problems"* Created by Professor Painter.
