@@ -577,9 +577,7 @@ $$
 To find $E(X)$, use
 
 $$
-E(X)
-=
-\sum_{i=0}^{\infty}
+E(X) = \sum_{i=0}^{\infty}
 i\Pr(X=i).
 $$
 
