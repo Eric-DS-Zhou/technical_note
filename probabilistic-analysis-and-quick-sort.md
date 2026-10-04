@@ -16,7 +16,7 @@ There are four main types of probabilistic analysis.
   - With Recursion
   - Without recursion
 - Random for
-  - single random loop
+  - Single random loop
   - Random loop inside an outer loop
 - Random-sized recursive call ( i.e. Number line problem )
 - Loop that randomly terminates
