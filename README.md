@@ -8,8 +8,7 @@ The goal of this repository is not only to keep notes, but also to explain topic
 
 ## Currently Included
 
-- OSU
-  - CSE 2331: Foundations II
+- Foundations II
     - Probabilistic Analysis & Quick Sort
 
 More topics and courses will be added as I continue learning.
