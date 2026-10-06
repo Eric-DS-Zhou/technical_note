@@ -1,4 +1,4 @@
-# Hashtable and Heap
+# Hash Table and Heap
 
 **Author:** Eric Zhou  
 **Email:** <eric_ds_zhou@outlook.com>  
@@ -6,7 +6,7 @@
 
 ## Introduction
 
-This technical note summarizes the tools and logic used in Hashtable and heap.
+This technical note summarizes the tools and logic used in Hash Table and heap.
 
 ## Since we learned Two Sum with hash tables, why don't we take a look at the actual LeetCode Two Sum problem?
 
@@ -44,7 +44,7 @@ Then, we check whether `need` is already in the hash table.
 - If it is, we use `get()` to retrieve its index and return the two indices.
 - Otherwise, we use `put()` to store `nums[i]` as the key and `i` as its value.
 
-### - Time complexity: $O(n)$
+### Time complexity: $\Theta(n)$
 
 ### Code
 
@@ -66,6 +66,7 @@ class Solution {
         return new int[]{};
     }
 }
+```
 
 ## Reference List
 
