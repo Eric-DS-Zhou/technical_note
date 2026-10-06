@@ -77,8 +77,6 @@ E(T(n) \mid A)\,
 E(T(n) \mid \neg A)
 $$
 
-
-
 From the formula, we can easily see that
 
 $$
