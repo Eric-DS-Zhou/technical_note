@@ -8,7 +8,26 @@
 
 This technical note summarizes the tools and logic used in Hash Table and heap.
 
-## Since we learned Two Sum with hash tables, why don't we take a look at the actual LeetCode Two Sum problem?
+## Table of contents
+
+- What Is a Good Hash Table?
+- Type of Hash Tables
+  - Chained Hashing
+  - Open Address Hashing
+- Time complexity about Hash Table
+- Table Doubling
+- What Is a valid heap?
+- Heap operation
+  - Insert
+  - Replace
+- Analysizing Alogrithms Using Heap
+- Bonus: Leetcode Two Sum
+
+## What Is a Good Hash Table
+
+## Bonus: Leetcode Two Sum
+
+Since we learned Two Sum with hash tables, why don't we take a look at the actual LeetCode Two Sum problem?
 
 Question:
 
@@ -70,7 +89,7 @@ class Solution {
 
 ## Reference List
 
-1. *"CSE2331_Types_of_Probabilistic_Problems"* Created by Professor Painter.
-2. *"Quick Sort Worksheet AU26"* Created by Professor Painter.
-3. *"CSE2331_QuickSort_and_Probabilistic_Analysis_Homework"* Created by Professor Painter.
+1. *"CSE2331_Midterm_3_Review"* Created by Professor Painter.
+2. *"CSE2331_Heaps_Homework"* Created by Professor Painter.
+3. *"CSE2331_Hashing_Homework"* Created by Professor Painter.
 4. LeetCode. "1. Two Sum." https://leetcode.com/problems/two-sum/

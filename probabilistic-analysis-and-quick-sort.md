@@ -8,6 +8,19 @@
 
 This technical note summarizes the tools and logic used in probabilistic analysis.
 
+## Table of contents
+
+- Type of probabilistic analysis
+  - Random if
+    - Random if with recursion
+    - Random if without recursion
+  - Random for
+    - single random loop
+    - Random loop inside an outer loop
+  - Random-sized recursive call ( i.e. Number Line problem )
+  - Loop that randomly terminates
+- Reference list
+
 ## Type of probabilistic analysis
 
 There are four main types of probabilistic analysis.
