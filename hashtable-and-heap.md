@@ -25,6 +25,51 @@ This technical note summarizes the tools and logic used in Hash Table and heap.
 
 ## What Is a Good Hash Table
 
+According to the note, Good hash functions should have the following properties:
+
+(1) All hash table locations are equally likely to be accessed.
+
+We should try our best to distribute keys uniformly across all buckets.
+
+Bad Hash Table:
+
+h(K) = (9K) mod 78
+
+Since gcd(9, 78) = 3, the hash function can only produce multiples of 3 (0, 3, 6, ..., 75).
+Therefore, only 1/3 of the buckets can be used.
+
+(2) Keys with a “regular” pattern should not be mapped to the same locations.
+
+Bad Hash Table:
+
+h(K) = K mod 10
+
+We can easily see that keys 10, 20, and 30 will all be mapped to bucket 0,
+resulting in multiple collisions.
+
+In addition, we also need to remember that the the size of hash table should be
+bigger than the number to be mod, or some indices will be invalid.
+
+## - Type of Hash Tables
+
+### Chained Hashing
+
+### Open Address Hashing
+
+## Time complexity about Hash Table
+
+## Table Doubling
+
+## What Is a valid heap?
+
+## Heap operation
+
+### Insert
+
+### Replace
+
+## Analysizing Alogrithms Using Heap
+
 ## Bonus: Leetcode Two Sum
 
 Since we learned Two Sum with hash tables, why don't we take a look at the actual LeetCode Two Sum problem?
