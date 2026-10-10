@@ -23,29 +23,35 @@ This technical note summarizes the tools and logic used in Hash Table and heap.
 - Analysizing Alogrithms Using Heap
 - Bonus: Leetcode Two Sum
 
-## What Is a Good Hash Table
+## What Is a Good Hash Table?
 
 According to the note, Good hash functions should have the following properties:
 
-(1) All hash table locations are equally likely to be accessed.
+### All hash table locations are equally likely to be accessed
 
 We should try our best to distribute keys uniformly across all buckets.
 
-Bad Hash Table:
+***Bad Hash Table:***
 
-h(K) = (9K) mod 78
+$$
+h(K) = (9K)\bmod78
+$$
 
 Since gcd(9, 78) = 3, the hash function can only produce multiples of 3 (0, 3, 6, ..., 75).
 Therefore, only 1/3 of the buckets can be used.
 
-(2) Keys with a “regular” pattern should not be mapped to the same locations.
+### Keys with a “regular” pattern should not be mapped to the same locations
 
-Bad Hash Table:
+***Bad Hash Table:***
 
-h(K) = K mod 10
+$$
+h(K) = K\bmod10
+$$
 
 We can easily see that keys 10, 20, and 30 will all be mapped to bucket 0,
 resulting in multiple collisions.
+
+### Hash Table Size and Modulus
 
 In addition, the size of the hash table should be greater than or equal to the modulus.
 Otherwise, some hash values may exceed the valid index range.
@@ -59,14 +65,14 @@ Typically, we choose the modulus to be equal to the table size.
 
 ## Type of Hash Tables
 
-There are two common ways to handle collisions in hash tables: chained hashing and open addressing hashing.
+There are two common ways to handle collisions in hash tables: **chained hashing** and **open addressing hashing**.
 
 Both are valid approaches, but they use different methods to handle collisions
 and may have different time complexities for dictionary operations.
 
 ### Chained Hashing
 
-Chained hashing is a common way to implement a hash table.
+**Chained hashing** is a common way to implement a hash table.
 When a collision occurs, we can store multiple elements in the same bucket,
 typically using a linked list.
 
@@ -95,21 +101,21 @@ Instead of searching for another empty bucket, chained hashing stores the elemen
 | Method | Best Case | Expected Case | Worst Case |
 | :--- | :---: | :---: | :---: |
 | `Insert(K, D)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(1)$ |
-| `Member(K)` | $\Theta(1)$ | $\Theta(1+n/m)$ | $\Theta(n)$ |
-| `Retrieve(K)` | $\Theta(1)$ | $\Theta(1+n/m)$ | $\Theta(n)$ |
-| `Add(K, x)` | $\Theta(1)$ | $\Theta(1+n/m)$ | $\Theta(n)$ |
-| `Replace(K, D)` | $\Theta(1)$ | $\Theta(1+n/m)$ | $\Theta(n)$ |
+| `Member(K)` | $\Theta(1)$ | $\Theta(1+s/m)$ | $\Theta(s)$ |
+| `Retrieve(K)` | $\Theta(1)$ | $\Theta(1+s/m)$ | $\Theta(s)$ |
+| `Add(K, x)` | $\Theta(1)$ | $\Theta(1+s/m)$ | $\Theta(s)$ |
+| `Replace(K, D)` | $\Theta(1)$ | $\Theta(1+s/m)$ | $\Theta(s)$ |
 
 Where:
 
-- $n$ = Number of elements stored in the hash table.
+- $s$ = Number of elements stored in the hash table.
 - $m$ = Number of buckets in the hash table.
 
 The expected time complexity assumes uniform hashing.
 
 ### Open Address Hashing
 
-Open address hashing is another common way to handle collisions in a hash table.
+**Open address hashing** is another common way to handle collisions in a hash table.
 
 Unlike chained hashing, open address hashing stores all elements directly in the hash table. When a collision occurs, we search for another available bucket using a **probing sequence**.
 
@@ -119,7 +125,7 @@ $$
 h(K,j)=(K+j)\bmod 7
 $$
 
-where $j=0,1,2,\ldots,6$ is the number of probing attempts.
+where $j=0,1,2,\ldots$ is the number of probing attempts.
 
 If we insert keys 10, 17, 24, 8, and 15, collisions will occur because several keys initially map to the same bucket.
 
@@ -158,17 +164,17 @@ Unlike chained hashing, no linked lists are needed because all keys are stored d
 
 | Method | Best Case | Expected Case | Worst Case |
 | :--- | :---: | :---: | :---: |
-| `Insert(K, D)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(n)$ |
-| `Member(K)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(n)$ |
-| `Retrieve(K)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(n)$ |
-| `Delete(K)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(n)$ |
-| `Retrieve(K)` (with deletion) | $\Theta(1)$ | $\Theta(1)$ | $\Theta(n)$ |
+| `Insert(K, D)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(s)$ |
+| `Member(K)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(s)$ |
+| `Retrieve(K)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(s)$ |
+| `Delete(K)` | $\Theta(1)$ | $\Theta(1)$ | $\Theta(s)$ |
+| `Retrieve(K)` (with deletion) | $\Theta(1)$ | $\Theta(1)$ | $\Theta(s)$ |
 
 Where:
 
-- $n$ = Number of elements stored in the hash table.
+- $s$ = Number of elements stored in the hash table.
 - $m$ = Number of buckets in the hash table.
-- $\alpha = n/m$ = Load factor.
+- $\alpha = s/m$ = Load factor.
 
 ## Example: Time Complexity Analysis
 
@@ -225,16 +231,19 @@ $$
 
 **Worst Case:**
 
-In the worst case, `Member` and `Add` may each take $\Theta(n)$ time due to collisions and repeated probing.
+In the worst case, `Member` and `Add` may each take $\Theta(s)$ time due to collisions and repeated probing.
 
-The first loop may perform both `Member` and `Add` in each iteration, while the second loop performs `Member`.
+In the first loop, the number of elements increases as elements are added, while the second loop performs Member on a Hashtable containing up to $n$ elements.
 
 Thus, using the classroom worst-case bounds:
 
 $$
+\begin{aligned}
 T_{\text{worst}}(n)
-= n(\Theta(n)+\Theta(n))+n\Theta(n)
-= \boxed{\Theta(n^2)}
+&= \sum_{i=1}^{n}(\Theta(i)+\Theta(i)) + n\Theta(n)\\
+&= \Theta(n^2)+\Theta(n^2)\\
+&= \boxed{\Theta(n^2)}
+\end{aligned}
 $$
 
 **Summary:**
@@ -304,7 +313,6 @@ Taking the logarithm on both sides:
 $$
 k = \log_2 n
 $$
-
 
 For sufficiently large $n$, the total running time is:
 
@@ -539,7 +547,7 @@ $$
 **Summary:**
 
 | Analysis | Time Complexity |
-|:---|:---:|
+| :--- | :---: |
 | Total insertion cost | $\Theta(n\log n)$ |
 | Total expansion cost | $\Theta(n^2)$ |
 | Total running time | $\Theta(n^2)$ |
@@ -547,7 +555,7 @@ $$
 
 Although the table size doubles only occasionally, the quadratic expansion cost dominates the total running time. Therefore, the amortized cost of each insertion is linear rather than constant.
 
-## What Is a valid heap?
+## What Is a Valid Heap?
 
 In this section, we only consider **Max-Heaps**.
 
@@ -566,33 +574,37 @@ For example, the following is a valid Max-Heap:
      30 50  60
 ```
 
-Each parent is greater than its children, and the tree is complete.
+Each parent is greater than or equal to its children, and the tree is complete.
 
 A heap can also be represented using an array.
 
-Using **1-based indexing**, for a node at index $i$:
+Using **1-based indexing**, index 0 is not used, and the root is stored at index 1.
+
+For a node at index $i$:
 
 - Parent: $\lfloor i/2 \rfloor$
 - Left child: $2i$
 - Right child: $2i+1$
 
-The height of a complete binary tree with $n$ nodes is:
+For example, if the root is at index $i=1$, its left child is at index 2 and its right child is at index 3.
+
+The number of levels in a complete binary tree with $n$ nodes is:
 
 $$
-h=\lfloor\log_2 n\rfloor
+L=\lceil\log_2(n+1)\rceil
 $$
 
-Therefore, the number of levels is:
+Therefore, the height of the tree is:
 
 $$
-L=\lfloor\log_2 n\rfloor+1
+h=L-1=\lfloor\log_2 n\rfloor
 $$
 
-Since the height grows logarithmically with $n$, heap operations that move along one path from the root to a leaf (or vice versa) can take at most $O(\log n)$ time.
+Since the height grows logarithmically with $n$, heap operations that move along one path from the root to a leaf (or vice versa) take at most $O(\log n)$ time.
 
-## Heap operation
+## Heap Operation
 
-### Insert in heap
+### Insert in Heap
 
 When inserting a new element into a Max-Heap, we first place it at the next available position to maintain the complete binary tree property.
 
@@ -640,11 +652,11 @@ In the worst case, the inserted element moves from the last level to the root.
 
 Therefore:
 
-$$
-\boxed{T_{\text{Insert}}(n)=O(\log n)}
-$$
+Therefore, the running time is:
 
-The worst-case running time is $\Theta(\log n)$, while the best case is $\Theta(1)$.
+$$
+\boxed{T_{\text{Insert}}(s)=\Theta(\log s)}
+$$
 
 ### ExtractMax in a Heap
 
@@ -698,13 +710,11 @@ The heap property is now satisfied.
 
 In the worst case, the element at the root moves all the way down to the last level.
 
-Therefore:
+Therefore, the running time is:
 
 $$
-\boxed{T_{\text{ExtractMax}}(n)=O(\log n)}
+\boxed{T_{\text{ExtractMax}}(s)=\Theta(\log s)}
 $$
-
-The worst-case running time is $\Theta(\log n)$, while the best case is $\Theta(1)$.
 
 ## Analysizing Alogrithms Using Heap
 
@@ -865,53 +875,63 @@ $$
 
 Since all terms are nonnegative, we can remove some terms to obtain a lower bound.
 
-For the insertion cost, we only consider the last half of the terms:
+For the insertion cost, we consider only the last half of the terms.
+
+For the extraction cost, we also consider only the last half of the terms.
+
+Therefore:
 
 $$
 T(n)\geq
 c_1\sum_{s=n^3/2}^{n^3}\log s
++
+c_2\sum_{s=n^3-\frac12 n\log n+1}^{n^3}\log s
 $$
 
-For every $s\geq n^3/2$:
+For every $s\geq n^3/2$ in the first summation:
 
 $$
 \log s\geq\log\left(\frac{n^3}{2}\right)
+$$
+
+For every $s\geq n^3-\frac12 n\log n+1$ in the second summation:
+
+$$
+\log s\geq
+\log\left(n^3-\frac12 n\log n+1\right)
 $$
 
 Therefore:
 
 $$
 T(n)\geq
-c_1\sum_{s=n^3/2}^{n^3}
-\log\left(\frac{n^3}{2}\right)
-$$
-
-There are at least $n^3/2$ terms in this summation.
-
-Thus:
-
-$$
-T(n)\geq
 c_1\frac{n^3}{2}
 \log\left(\frac{n^3}{2}\right)
++
+c_2\frac{n\log n}{2}
+\log\left(n^3-\frac12 n\log n+1\right)
 $$
 
 Using the logarithm property:
 
 $$
 \log\left(\frac{n^3}{2}\right)
-=3\log n-\log2
+=3\log n-\log 2
 $$
 
 We obtain:
 
 $$
 T(n)\geq
-c_1\frac{n^3}{2}
-(3\log n-\log2)
+c_1\frac{n^3}{2}(3\log n-\log 2)
++
+c_2\frac{n\log n}{2}
+\log\left(n^3-\frac12 n\log n+1\right)
 $$
 
-Since $\log2$ is a constant:
+The first term grows as $\Omega(n^3\log n)$, while the second term is nonnegative.
+
+Therefore:
 
 $$
 \boxed{T(n)\in\Omega(n^3\log n)}
@@ -937,7 +957,7 @@ $$
 \boxed{T(n)\in\Theta(n^3\log n)}
 $$
 
-## Key Takeaways: Analyzing Algorithms Using Heaps
+## Key Takeaways
 
 1. **Track the Heap Size:** Determine how the heap size $s$ changes throughout the algorithm.
 
@@ -949,10 +969,9 @@ $$
 
 4. **Combine the Bounds:** Use $O$ and $\Omega$ to determine the final $\Theta$ bound.
 
-
 ## Bonus: Leetcode Two Sum
 
-Since we learned Two Sum with hash tables, why don't we take a look at the actual LeetCode Two Sum problem?
+Since we learned Two Sum with hash tables, why don't we take a look at the actual LeetCode **Two Sum** problem?
 
 Question:
 
@@ -992,7 +1011,7 @@ Then, we check whether `need` is already in the hash table.
 
 ### Code
 
-```java []
+```java
 class Solution {
     public int[] twoSum(int[] nums, int target) {
         HashMap<Integer, Integer> map = new HashMap<>();
@@ -1017,4 +1036,6 @@ class Solution {
 1. *"CSE2331_Midterm_3_Review"* Created by Professor Painter.
 2. *"CSE2331_Heaps_Homework"* Created by Professor Painter.
 3. *"CSE2331_Hashing_Homework"* Created by Professor Painter.
-4. LeetCode. "1. Two Sum." https://leetcode.com/problems/two-sum/
+4. *"CSE2331_Hashing_Outline"* Created by Professor Painter.
+5. *"CSE2331_Heaps_Outline"* Created by Professor Painter.
+6. LeetCode. "1. Two Sum." <https://leetcode.com/problems/two-sum/>
