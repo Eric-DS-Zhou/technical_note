@@ -80,7 +80,7 @@ LeftRotateAndUpdateBalance(T, z) {
 
 $$
 \boxed{\Theta(h)}
-$
+$$
 
 After the left rotation, the algorithm updates the height and balance of each node along the path from the original `z` to the root. Each update takes constant time, and there are at most \(h + 1\) nodes on this path.
 
