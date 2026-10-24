@@ -864,6 +864,584 @@ An important distinction is that a Red-Black Tree does not need to be perfectly 
 
 In the following section, we will examine the five properties that define a valid Red-Black Tree.
 
+## Properties of a Valid Red-Black Tree
+
+A Red-Black Tree is a Binary Search Tree that satisfies **five additional properties**.
+
+These properties ensure that the tree maintains a logarithmic height, even after insertions and deletions.
+
+### Five Properties of a Red-Black Tree
+
+**Property I: Every node is either red or black.**
+
+Each node in a Red-Black Tree must have exactly one color: red or black.
+
+**Property II: The root is black.**
+
+The root of a Red-Black Tree must always be black.
+
+During insertion, the root may temporarily become red. However, it must be recolored black before the insertion process is complete.
+
+**Property III: Every leaf is NIL and is black.**
+
+In a Red-Black Tree, every missing child is represented by a black `NIL` leaf.
+
+These `NIL` leaves are often omitted from diagrams for simplicity, but they must still be considered when checking the Red-Black Tree Properties.
+
+**Property IV: If a node is red, both of its children must be black.**
+
+In other words, two red nodes cannot appear consecutively along a path.
+
+However, two consecutive black nodes are allowed.
+
+**Property V: Every path from a node to its descendant NIL leaves contains the same number of black nodes.**
+
+This property ensures that all downward paths from the same node have an equal number of black nodes.
+
+When counting black nodes, remember that `NIL` leaves are black and must be included.
+
+### How to Verify a Valid Red-Black Tree
+
+To determine whether a given tree is a valid Red-Black Tree, we need to check all five properties.
+
+In particular, we should pay close attention to Properties IV and V.
+
+**Example:**
+
+Consider the following tree:
+
+```text
+          10(B)
+         /     \
+       5(R)    15(R)
+      /   \    /   \
+    3(B) 7(B) 12(B) 18(B)
+```
+
+Here, `(B)` represents black and `(R)` represents red.
+
+We can verify that:
+
+1. Every node is either red or black.
+2. The root `10` is black.
+3. All missing children are black `NIL` leaves.
+4. Every red node has two black children.
+5. Every path from the root to a `NIL` leaf contains the same number of black nodes.
+
+For example:
+
+- `10 → 5 → 3 → NIL`: 3 black nodes
+- `10 → 5 → 7 → NIL`: 3 black nodes
+- `10 → 15 → 12 → NIL`: 3 black nodes
+- `10 → 15 → 18 → NIL`: 3 black nodes
+
+Therefore, this is a **valid Red-Black Tree**.
+
+### Why Is the Height of a Red-Black Tree Θ(log n)?
+
+We know that the height of a regular BST can be as large as Θ(n).
+
+However, the five Red-Black Tree Properties guarantee that its height remains Θ(log n).
+
+To prove this, we introduce three theorems.
+
+**Theorem I: Number of Nodes in a Complete Binary Tree**
+
+A complete binary tree of height `h` contains:
+
+$$
+n = 2^{h+1}-1
+$$
+
+**Proof:**
+
+The number of nodes at each level is:
+
+$$
+1, 2, 2^2, \ldots, 2^h
+$$
+
+Therefore:
+
+$$
+n = 1+2+2^2+\cdots+2^h
+$$
+
+Using the geometric series formula:
+
+$$
+n = 2^{h+1}-1
+$$
+
+Solving for `h`:
+
+$$
+h = \log_2(n+1)-1
+$$
+
+**Theorem II: Minimum Number of Internal Nodes in a Red-Black Tree**
+
+A Red-Black Tree of height `h` contains at least:
+
+$$
+n \geq 2^{\lceil h/2 \rceil}-1
+$$
+
+internal nodes.
+
+**Proof:**
+
+Recall that a red node cannot have a red child.
+
+Therefore, along the longest path from the root to a leaf, red and black nodes can alternate, but two red nodes cannot appear consecutively.
+
+Since the root is black, the number of black internal nodes along the longest path must be at least:
+
+$$
+\left\lceil \frac{h}{2} \right\rceil
+$$
+
+By Property V, every path from the root to a `NIL` leaf must contain the same number of black nodes.
+
+Therefore, every root-to-leaf path contains at least this many black internal nodes.
+
+This implies that the tree contains at least:
+
+$$
+2^{\lceil h/2 \rceil}-1
+$$
+
+internal nodes.
+
+**Theorem III: Height of a Red-Black Tree**
+
+For a Red-Black Tree containing `n` internal nodes, its height satisfies:
+
+$$
+h \leq 2\log_2(n+1)
+$$
+
+**Proof:**
+
+From Theorem II:
+
+$$
+n \geq 2^{\lceil h/2 \rceil}-1
+$$
+
+Adding 1 to both sides:
+
+$$
+n+1 \geq 2^{\lceil h/2 \rceil}
+$$
+
+Taking logarithms:
+
+$$
+\log_2(n+1) \geq \left\lceil \frac{h}{2} \right\rceil
+$$
+
+Since:
+
+$$
+\left\lceil \frac{h}{2} \right\rceil \geq \frac{h}{2}
+$$
+
+we obtain:
+
+$$
+\log_2(n+1) \geq \frac{h}{2}
+$$
+
+Therefore:
+
+$$
+h \leq 2\log_2(n+1)
+$$
+
+Combining this with the lower bound for a Binary Search Tree:
+
+$$
+\log_2(n+1)-1 \leq h \leq 2\log_2(n+1)
+$$
+
+Thus:
+
+$$
+\boxed{h = \Theta(\log n)}
+$$
+
+This is why a Red-Black Tree can guarantee logarithmic worst-case running time for its fundamental operations.
+
+## Insertion in a Red-Black Tree
+
+Insertion in a Red-Black Tree begins in the same way as insertion in a regular Binary Search Tree.
+
+However, after inserting a new node, we must ensure that all five Red-Black Tree Properties are satisfied.
+
+The insertion process consists of three main steps:
+
+1. Locate the appropriate position using the BST insertion procedure.
+2. Insert the new node `z` and color it **red**.
+3. Apply `RBInsertFixup` to restore the Red-Black Tree Properties.
+
+**Why do we initially color the new node red?**
+
+Because inserting a red node does not change the number of black nodes along any root-to-leaf path.
+
+Therefore, Property V remains satisfied.
+
+However, if the parent of `z` is also red, Property IV is violated, and we must fix the tree.
+
+### Case I: Parent and Uncle Are Both Red
+
+Suppose the newly inserted node `z` has a red parent, and its uncle (the sibling of its parent) is also red.
+
+In this case, we can restore the local Red-Black Tree Properties through **recoloring**, without performing any rotations.
+
+**Procedure:**
+
+1. Color the parent of `z` black.
+2. Color the uncle of `z` black.
+3. Color the grandparent of `z` red.
+4. Set `z` to its grandparent and repeat if necessary.
+
+**Example:**
+
+Before recoloring:
+
+```text
+           20(B)
+          /     \
+       10(R)    30(R)
+       /
+     5(R)
+```
+
+Here, the parent `10` and uncle `30` are both red.
+
+After recoloring:
+
+```text
+           20(R)
+          /     \
+       10(B)    30(B)
+       /
+     5(R)
+```
+
+If `20` is the root, we must recolor it black at the end.
+
+**Pseudocode:**
+
+```text
+RBInsertFixupA(T, z)
+    while z != T.root and z.parent.color != black
+        y = Sibling(z.parent)
+
+        if y.color == black
+            return
+        end if
+
+        z.parent.color = black
+        y.color = black
+
+        z = z.parent.parent
+        z.color = red
+    end while
+```
+
+**Time Complexity:**
+
+Each iteration performs a constant number of operations and moves `z` upward by two levels.
+
+Therefore, the loop runs at most `h/2` times, giving:
+
+$$
+T(h) = O(h)
+$$
+
+### Case II: Parent Is Red and Uncle Is Black
+
+Case II occurs when the parent of `z` is red, the uncle is black, and the positions of `z`, its parent, and its grandparent form a **zigzag pattern**.
+
+There are two symmetric configurations:
+
+- LR (Left-Right)
+- RL (Right-Left)
+
+The purpose of Case II is to transform the configuration into Case III.
+
+#### LR Case
+
+The node `z` is the right child of its parent, while its parent is the left child of its grandparent.
+
+Before rotation:
+
+```text
+           30(B)
+          /
+       10(R)
+          \
+          20(R)
+```
+
+We perform a **Left Rotation on the parent `10`**:
+
+```text
+           30(B)
+          /
+       20(R)
+       /
+    10(R)
+```
+
+The LR configuration has now been transformed into an LL configuration.
+
+We then apply Case III.
+
+#### RL Case
+
+The node `z` is the left child of its parent, while its parent is the right child of its grandparent.
+
+Before rotation:
+
+```text
+       10(B)
+          \
+          30(R)
+          /
+       20(R)
+```
+
+We perform a **Right Rotation on the parent `30`**:
+
+```text
+       10(B)
+          \
+          20(R)
+             \
+             30(R)
+```
+
+The RL configuration has now been transformed into an RR configuration.
+
+We then apply Case III.
+
+**Pseudocode:**
+
+```text
+RBInsertFixupB(T, z)
+    if z == T.root or z.parent.color == black
+        return
+    end if
+
+    x = z.parent
+    w = x.parent
+
+    if z == x.right and x == w.left
+        z = x
+        LeftRotate(T, x)
+
+    else if z == x.left and x == w.right
+        z = x
+        RightRotate(T, x)
+    end if
+```
+
+**Time Complexity:**
+
+Case II requires only one rotation and a constant number of pointer assignments.
+
+Therefore:
+
+$$
+T(n) = \Theta(1)
+$$
+
+### Case III: Parent Is Red and Uncle Is Black
+
+Case III occurs when the parent of `z` is red, the uncle is black, and the positions of `z`, its parent, and its grandparent form a **straight-line pattern**.
+
+There are two symmetric configurations:
+
+- LL (Left-Left)
+- RR (Right-Right)
+
+Unlike Case II, Case III resolves the local violation through a rotation followed by recoloring.
+
+#### LL Case
+
+The node `z` is the left child of its parent, and its parent is the left child of its grandparent.
+
+Before rotation:
+
+```text
+           30(B)
+          /
+       20(R)
+       /
+    10(R)
+```
+
+We perform a **Right Rotation on the grandparent `30`**:
+
+```text
+        20(R)
+       /    \
+    10(R)  30(B)
+```
+
+Then recolor: (Follow BRR)
+
+- `20` becomes black.
+- `30` becomes red.
+
+The resulting tree is:
+
+```text
+        20(B)
+       /    \
+    10(R)  30(R)
+```
+
+#### RR Case
+
+The node `z` is the right child of its parent, and its parent is the right child of its grandparent.
+
+Before rotation:
+
+```text
+       10(B)
+          \
+          20(R)
+             \
+             30(R)
+```
+
+We perform a **Left Rotation on the grandparent `10`**:
+
+```text
+        20(R)
+       /    \
+    10(B)  30(R)
+```
+
+Then recolor: (Follow BRR)
+
+- `20` becomes black.
+- `10` becomes red.
+
+The resulting tree is:
+
+```text
+        20(B)
+       /    \
+    10(R)  30(R)
+```
+
+**Pseudocode:**
+
+```text
+RBInsertFixupC(T, z)
+    if z == T.root or z.parent.color == black
+        return
+    end if
+
+    x = z.parent
+    w = x.parent
+
+    if z == x.left and x == w.left
+        RightRotate(T, w)
+        x.color = black
+        w.color = red
+
+    else if z == x.right and x == w.right
+        LeftRotate(T, w)
+        x.color = black
+        w.color = red
+    end if
+```
+
+**Time Complexity:**
+
+Case III performs only one rotation and a constant number of recoloring operations.
+
+Therefore:
+
+$$
+T(n) = \Theta(1)
+$$
+
+### Root Recoloring
+
+During the insertion process, Case I may recolor the root red.
+
+However, according to Property II, the root of a valid Red-Black Tree must always be black.
+
+Therefore, after applying all necessary fixup operations, we explicitly recolor the root black.
+
+**Complete Fixup Algorithm:**
+
+```text
+RBInsertFixup(T, z)
+    RBInsertFixupA(T, z)
+    RBInsertFixupB(T, z)
+    RBInsertFixupC(T, z)
+    T.root.color = black
+```
+
+The complete insertion algorithm is:
+
+```text
+RBTreeInsert(T, z)
+    y = RBLocateParent(T, z)
+    z.parent = y
+
+    if y == NIL
+        T.root = z
+    else if z.key < y.key
+        y.left = z
+    else
+        y.right = z
+    end if
+
+    z.left = leaf
+    z.right = leaf
+    z.color = red
+
+    RBInsertFixup(T, z)
+```
+
+**Time Complexity:**
+
+Locating the insertion position takes O(h) time.
+
+The fixup operations require:
+
+- Case I: O(h)
+- Case II: O(1)
+- Case III: O(1)
+- Root Recoloring: O(1)
+
+Therefore, the complete insertion algorithm takes:
+
+$$
+T(h) = O(h)
+$$
+
+Since a Red-Black Tree guarantees:
+
+$$
+h = \Theta(\log n)
+$$
+
+we obtain:
+
+$$
+\boxed{T(n) = \Theta(\log n)}
+$$
+
 ## Practice Problem: BST Left Rotation and Balance Update (15 Points)
 
 Consider a Binary Search Tree (BST) in which each node `v` stores the following information:
