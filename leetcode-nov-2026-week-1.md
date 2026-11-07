@@ -46,7 +46,9 @@ We iterate through both arrays using a while loop.
 
 For each iteration, we check:
 
-g[i] <= s[j]
+$$
+g[i] \leq s[j]
+$$
 
 If this condition is `true`, the current cookie can satisfy the child. Therefore, we increment both `i` and `j`.
 
@@ -56,7 +58,7 @@ We repeat this process until we have checked all children or all cookies.
 
 Finally, we return `i`, which represents the maximum number of satisfied children.
 
-Time Complexity: 
+Time Complexity:
 
 $$
 \Theta(n \log n + m \log m)
