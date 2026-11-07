@@ -1,4 +1,4 @@
-# LeetCode – Nov 2026 | Week 1
+# LeetCode – Nov 2026 | Day 1
 
 **Author:** Eric Zhou  
 **Email:** <eric_ds_zhou@outlook.com>  
