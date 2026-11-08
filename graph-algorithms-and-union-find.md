@@ -1563,7 +1563,7 @@ end function
 
 **Example:**
 
-![Path Compression](img/path_compression.png)
+![Path Compression](/img/path_compression.png)
 
 *Figure 7. Tree-Based Union-Find before and after FindSetPathCompress(x3), showing how parent pointers along the path are updated to point directly to root x10. Source: Professor Painter's CSE 2331 lecture notes.*
 
