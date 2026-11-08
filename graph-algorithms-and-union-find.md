@@ -607,7 +607,7 @@ The MST Lemma provides the edge exchange property, while the MST Theorem uses th
 
 Consider the weighted graph from Professor Painter's lecture notes.
 
-![MST Example Blank](mst-example-blank.png)
+![MST Example Blank](img/mst-example-blank.png)
 
 Starting from vertex $v_1$, Prim's Algorithm selects the following edges:
 
@@ -635,7 +635,7 @@ $$
 
 The resulting MST contains all eight vertices and seven edges.
 
-![MST Example](mst-example-final.png)
+![MST Example](img/mst-example-final.png)
 
 **Prim vs. Kruskal:**
 
@@ -874,7 +874,7 @@ This is an upper bound, following the analysis in Professor Painter's lecture no
 
 The Min Heap implementation can be more efficient for sparse graphs, while the $\Theta(n^2+m)$ implementation can be preferable for dense graphs.
 
-![Shortest Path Example](shortest_path_example.png)
+![Shortest Path Example](img/shortest_path_example.png)
 
 ## Reference List
 
