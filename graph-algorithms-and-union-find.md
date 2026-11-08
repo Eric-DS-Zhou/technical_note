@@ -637,6 +637,9 @@ The resulting MST contains all eight vertices and seven edges.
 
 ![MST Example](img/mst-example-final.png)
 
+*Figure 1 & 2. An undirected weighted graph used to demonstrate Prim's Minimum Spanning Tree Algorithm. Source: Professor Painter's CSE 2331 lecture notes.*
+
+
 **Prim vs. Kruskal:**
 
 | Property | Prim | Kruskal |
@@ -874,7 +877,760 @@ This is an upper bound, following the analysis in Professor Painter's lecture no
 
 The Min Heap implementation can be more efficient for sparse graphs, while the $\Theta(n^2+m)$ implementation can be preferable for dense graphs.
 
+## Shortest Paths
+
+### Definition
+
+A **Shortest Path** is a path between two vertices that minimizes the total weight of the edges along the path.
+
+Let $d(u,v)$ denote the minimum distance from vertex $u$ to vertex $v$.
+
+For a weighted path $P$, its total weight is:
+
+$$
+weight(P)=\sum_{e\in P}weight(e)
+$$
+
+Therefore:
+
+$$
+\boxed{d(u,v)=\min_{P:u\rightarrow v}weight(P)}
+$$
+
+A **Shortest Path Tree (SPT)** stores the shortest paths from a source vertex to all reachable vertices.
+
+Unlike a Minimum Spanning Tree, which minimizes the total weight of the entire tree, a Shortest Path Tree minimizes the distance from a particular source vertex to each vertex.
+
+### Shortest Path Theorems
+
+#### 1. Shortest Path Theorem 1
+
+If:
+
+$$
+(v_1,v_2,\ldots,v_{i-1},v_i)
+$$
+
+is a shortest path from $v_1$ to $v_i$, then:
+
+$$
+(v_1,v_2,\ldots,v_{i-1})
+$$
+
+must also be a shortest path from $v_1$ to $v_{i-1}$.
+
+**Proof:**
+
+Assume there exists a shorter path $P$ from $v_1$ to $v_{i-1}$.
+
+By appending the edge $(v_{i-1},v_i)$ to $P$, we obtain a route from $v_1$ to $v_i$ that is shorter than the original shortest path.
+
+This contradicts the assumption that the original path was the shortest.
+
+Therefore, the subpath must also be a shortest path.
+
+**Key Observation:**
+
+Every subpath of a shortest path is also a shortest path between its endpoints.
+
+#### 2. Shortest Path Theorem 2
+
+Let $v_s$ be the source vertex, and let $U$ be the set of undiscovered vertices, where $v_s\notin U$.
+
+Suppose $(v_i,v_j)$ is an edge connecting a discovered vertex $v_i$ to an undiscovered vertex $v_j$ that minimizes:
+
+$$
+d(v_s,v_i)+weight(v_i,v_j)
+$$
+
+among all crossing edges.
+
+Then:
+
+$$
+\boxed{d(v_s,v_j)=d(v_s,v_i)+weight(v_i,v_j)}
+$$
+
+**Proof:**
+
+We prove the theorem using two inequalities.
+
+**Part 1: Prove $\le$**
+
+Let $P$ be a shortest path from $v_s$ to $v_i$.
+
+Its length is:
+
+$$
+Length(P)=d(v_s,v_i)
+$$
+
+By appending the edge $(v_i,v_j)$, we obtain a route from $v_s$ to $v_j$ with length:
+
+$$
+d(v_s,v_i)+weight(v_i,v_j)
+$$
+
+Since $d(v_s,v_j)$ is the minimum distance:
+
+$$
+\boxed{d(v_s,v_j)\le d(v_s,v_i)+weight(v_i,v_j)}
+$$
+
+**Part 2: Prove $\ge$**
+
+Let $P$ be a shortest path from $v_s$ to $v_j$.
+
+Since $v_s$ is discovered and $v_j$ is undiscovered, $P$ must contain a crossing edge $(v_a,v_b)$, where:
+
+- $v_a\in G.V-U$
+- $v_b\in U$
+
+The shortest path distance must satisfy:
+
+$$
+d(v_s,v_j)\ge d(v_s,v_a)+weight(v_a,v_b)
+$$
+
+Since $(v_i,v_j)$ minimizes the distance expression among all crossing edges:
+
+$$
+d(v_s,v_a)+weight(v_a,v_b)\ge d(v_s,v_i)+weight(v_i,v_j)
+$$
+
+Therefore:
+
+$$
+\boxed{d(v_s,v_j)\ge d(v_s,v_i)+weight(v_i,v_j)}
+$$
+
+**Combining Both Parts:**
+
+We have:
+
+$$
+d(v_s,v_j)\le d(v_s,v_i)+weight(v_i,v_j)
+$$
+
+and:
+
+$$
+d(v_s,v_j)\ge d(v_s,v_i)+weight(v_i,v_j)
+$$
+
+Thus:
+
+$$
+\boxed{d(v_s,v_j)=d(v_s,v_i)+weight(v_i,v_j)}
+$$
+
+This theorem establishes the correctness of the greedy choice used in Dijkstra's Algorithm when combined with the invariant that discovered vertices have their correct shortest distances.
+
+### Dijkstra's Algorithm
+
+Dijkstra's Algorithm is a greedy algorithm used to find the shortest paths from a source vertex to every reachable vertex in a weighted graph with nonnegative edge weights.
+
+The algorithm is structurally similar to Prim's Algorithm.
+
+However, instead of selecting the minimum edge weight, Dijkstra selects the vertex with the minimum total distance from the source.
+
+**Greedy Strategy:**
+
+- Initialize the source vertex with distance $0$ and all other vertices with distance $\infty$.
+- Select the undiscovered vertex with the minimum tentative distance.
+- Add this vertex to the Shortest Path Tree.
+- Check its incident edges and update the distances of its undiscovered neighbors when a shorter route is found.
+- Repeat until all reachable vertices have been discovered.
+
+**Key Difference Between Prim and Dijkstra:**
+
+**Prim's Algorithm:**
+
+```text
+if weight(vj, vk) < vk.cost then
+    vk.cost = weight(vj, vk)
+    vk.parent = vj
+```
+
+Prim only considers the weight of the connecting edge.
+
+**Dijkstra's Algorithm:**
+
+```text
+newDist = vj.distance + weight(vj, vk)
+
+if newDist < vk.distance then
+    vk.distance = newDist
+    vk.parent = vj
+```
+
+Dijkstra considers the total distance from the source to the current vertex plus the weight of the new edge.
+
+**Comparison:**
+
+| Property | Prim | Dijkstra |
+| --- | --- | --- |
+| Goal | Minimum Spanning Tree | Shortest Path Tree |
+| Greedy Choice | Minimum edge weight | Minimum total distance |
+| Stored Value | `cost` | `distance` |
+| Update | `weight(vj,vk)` | `vj.distance + weight(vj,vk)` |
+| Heap Operations | ExtractMin, DecreaseKey | ExtractMin, DecreaseKey |
+
+### Examples
+
+The following figure illustrates how Dijkstra's Algorithm constructs a Shortest Path Tree starting from source vertex $v_1$.
+
 ![Shortest Path Example](img/shortest_path_example.png)
+
+*Figure 3. Step-by-step construction of a Shortest Path Tree using Dijkstra's Algorithm. Source: Professor Painter's CSE 2331 lecture notes.*
+
+For example, the shortest path from $v_1$ to $v_8$ is:
+
+$$
+v_1\rightarrow v_6\rightarrow v_7\rightarrow v_5\rightarrow v_8
+$$
+
+The total distance is:
+
+$$
+d(v_1,v_8)=8+7+1+5
+$$
+
+Therefore:
+
+$$
+\boxed{d(v_1,v_8)=21}
+$$
+
+This example demonstrates how Dijkstra's Algorithm repeatedly selects the vertex with the minimum tentative distance and updates the distances of its neighboring vertices.
+
+### Implementation and Complexity Analysis
+
+Since Dijkstra's Algorithm has almost the same structure as Prim's Algorithm, the three implementations have the same time complexity under the assumptions used in Professor Painter's lecture notes.
+
+#### 1. Basic Dijkstra Implementation
+
+The basic implementation repeatedly scans the graph's edges to find the crossing edge that minimizes:
+
+$$
+d(v_s,v_i)+weight(v_i,v_j)
+$$
+
+For each iteration, finding this edge may require examining all $m$ edges.
+
+Since approximately $n$ iterations are required for a connected graph:
+
+$$
+\boxed{T(n,m)\in\Theta(nm)}
+$$
+
+#### 2. Improved Dijkstra Implementation
+
+Similar to Improved Prim, we store the current best distance for every undiscovered vertex.
+
+Each vertex maintains:
+
+- `distance`: The current minimum known distance from the source.
+- `parent`: The predecessor providing that distance.
+
+After selecting a new vertex, the algorithm checks only its incident edges and updates the distances of its undiscovered neighbors.
+
+**Time Complexity Analysis:**
+
+Finding the undiscovered vertex with minimum distance requires:
+
+$$
+T_{\text{Selection}}\in\Theta(n^2)
+$$
+
+Checking all incident edges throughout the algorithm requires:
+
+$$
+T_{\text{Edges}}\in\Theta(m)
+$$
+
+Therefore:
+
+$$
+\boxed{T(n,m)\in\Theta(n^2+m)}
+$$
+
+#### 3. Dijkstra Implementation with Min Heap
+
+The third implementation uses a **Min Priority Queue** implemented with a Min Heap.
+
+All vertices are initially inserted into the heap:
+
+- Source vertex: `distance = 0`
+- Other vertices: `distance = infinity`
+
+At each iteration:
+
+- `ExtractMin()` selects the vertex with the minimum distance.
+- Its incident edges are examined.
+- `DecreaseKey()` updates neighboring vertices when a shorter route is discovered.
+
+**Time Complexity Analysis:**
+
+Inserting all vertices requires:
+
+$$
+T_{\text{Insert}}\in\Theta(n\log n)
+$$
+
+Extracting all vertices requires:
+
+$$
+T_{\text{ExtractMin}}\in\Theta(n\log n)
+$$
+
+Updating distances through the incident edges requires at most:
+
+$$
+T_{\text{Updates}}\in O(m\log n)
+$$
+
+Therefore:
+
+$$
+T(n,m)=O(n\log n+n\log n+m\log n)
+$$
+
+Thus:
+
+$$
+\boxed{T(n,m)\in O(n\log n+m\log n)}
+$$
+
+**Comparison of Dijkstra Implementations:**
+
+| Implementation | Main Idea | Time Complexity |
+| --- | --- | --- |
+| Basic Dijkstra | Repeatedly scan the edges to find the crossing edge with the minimum total distance from the source. | $\Theta(nm)$ |
+| Improved Dijkstra | Store the current minimum distance for each undiscovered vertex. After adding a vertex, update its neighbors if a shorter route is found. Scan undiscovered vertices to select the next minimum distance. | $\Theta(n^2+m)$ |
+| Min Heap Dijkstra | Initialize all vertices in a Min Heap with distance $\infty$, except the source with distance $0$. Repeatedly use `ExtractMin()` to select the minimum distance and `DecreaseKey()` to update its neighbors. | $O(n\log n+m\log n)$ |
+
+**Key Observation:**
+
+The three implementations of Dijkstra's Algorithm follow the same optimization process as Prim's Algorithm.
+
+The main difference is the quantity being minimized:
+
+$$
+\boxed{\text{Prim: Minimum Edge Weight}}
+$$
+
+$$
+\boxed{\text{Dijkstra: Minimum Total Distance}}
+$$
+
+## Union-Find
+
+### Definition and Operations
+
+**Union-Find**, also known as the **Disjoint Set** data structure, is used to represent a collection of disjoint sets, where each element belongs to exactly one set.
+
+Union-Find supports four fundamental operations:
+
+- **MakeSet(x):** Creates a new set containing only element $x$.
+- **Union(x,y):** Merges the sets containing $x$ and $y$.
+- **FindSet(x):** Returns the representative element of the set containing $x$.
+- **InSameSet(x,y):** Determines whether $x$ and $y$ belong to the same set.
+
+Two elements belong to the same set if they have the same representative:
+
+$$
+\boxed{FindSet(x)=FindSet(y)}
+$$
+
+Union-Find is useful for identifying connected components in a graph and detecting cycles in Kruskal's Minimum Spanning Tree Algorithm.
+
+There are two main implementations discussed in Professor Painter's lecture notes:
+
+- Linked List Union-Find
+- Tree-Based Union-Find
+
+### Linked List Union-Find
+
+In the Linked List implementation, each disjoint set is represented by a linked list.
+
+The **head** of each linked list serves as the representative element of the set.
+
+Each node maintains:
+
+- `head`: A pointer to the representative element.
+- `next`: A pointer to the next node.
+- `tail`: A pointer from the representative to the last node.
+
+**Basic Operations:**
+
+```text
+function MakeSet(x)
+    x.head = x
+    x.tail = x
+    x.next = NULL
+end function
+
+function FindSet(x)
+    return x.head
+end function
+```
+
+Both operations require constant time:
+
+$$
+\boxed{T_{\text{MakeSet}}=\Theta(1)}
+$$
+
+$$
+\boxed{T_{\text{FindSet}}=\Theta(1)}
+$$
+
+**Union Operation:**
+
+To merge two linked lists, we append one list to the other and update the head pointers of the appended list.
+
+```text
+function Union(x, y)
+    xRoot = FindSet(x)
+    yRoot = FindSet(y)
+
+    if xRoot = yRoot then
+        return
+    end if
+
+    xRoot.tail.next = yRoot
+
+    z = yRoot
+    while z != NULL do
+        z.head = xRoot
+        z = z.next
+    end while
+
+    xRoot.tail = yRoot.tail
+end function
+```
+
+Since every node in the second linked list must have its head pointer updated:
+
+$$
+\boxed{T_{\text{Union}}=\Theta(y.length)}
+$$
+
+#### Weighted Union
+
+The basic Union operation always appends the second list to the first list.
+
+However, this may require updating a large number of head pointers.
+
+To improve efficiency, **Weighted Union** always appends the shorter linked list to the longer linked list.
+
+**Key Idea:**
+
+- Compare the lengths of the two linked lists.
+- Append the shorter list to the longer list.
+- Update only the head pointers in the shorter list.
+- Update the length and tail of the resulting list.
+
+Therefore:
+
+$$
+\boxed{T_{\text{WeightedUnion}}=\Theta(\min(x.length,y.length))}
+$$
+
+This improvement requires storing the length of each linked list.
+
+![Linked List Union-Find](img/linked_list_union_find_blank.png)
+![Linked List Union-Find](img/linked_list_union_find_final.png)
+
+*Figure 4 & 5. Linked List Union-Find before and after the Union operation, showing the updated head and tail pointers. Source: Professor Painter's CSE 2331 lecture notes.*
+
+**Amortized Analysis:**
+
+Suppose we begin with $n$ disjoint sets, each containing a single element, and eventually combine them into one set.
+
+Consider an arbitrary element $x_i$.
+
+Whenever its head pointer is updated, the size of its set must at least double.
+
+Therefore, the minimum possible sizes of the set containing $x_i$ are:
+
+$$
+1,2,4,8,\ldots,n
+$$
+
+Let $K_i$ denote the number of times the head pointer of $x_i$ is updated.
+
+Since its set size at least doubles each time:
+
+$$
+2^{K_i}\le n
+$$
+
+Therefore:
+
+$$
+\boxed{K_i\le\log_2 n}
+$$
+
+Since updating one head pointer requires constant time:
+
+$$
+T(n)\le\sum_{i=1}^{n}cK_i
+$$
+
+Thus:
+
+$$
+T(n)\le cn\log_2 n
+$$
+
+A matching worst-case lower bound can be obtained by repeatedly merging pairs of equally sized sets.
+
+At each merging level, approximately $n/2$ head pointers are updated.
+
+There are $\log_2 n$ levels, so the total cost is:
+
+$$
+\Theta(n\log_2 n)
+$$
+
+Therefore, the total worst-case running time of combining $n$ initially disjoint elements using Weighted Union is:
+
+$$
+\boxed{T(n)\in\Theta(n\log n)}
+$$
+
+Since approximately $n$ Union operations are performed, the amortized cost per Union operation is:
+
+$$
+\boxed{\Theta(\log n)}
+$$
+
+### Tree-Based Union-Find
+
+In the Tree-Based implementation, each disjoint set is represented by a tree.
+
+The **root** of each tree serves as the representative element of the set.
+
+Each node maintains a `parent` pointer, and the root is identified by:
+
+$$
+\boxed{x.parent=x}
+$$
+
+**Basic Operations:**
+
+```text
+function MakeSet(x)
+    x.parent = x
+end function
+
+function FindSet(x)
+    if x.parent = x then
+        return x
+    else
+        return FindSet(x.parent)
+    end if
+end function
+```
+
+`MakeSet` takes constant time:
+
+$$
+T_{\text{MakeSet}}=\Theta(1)
+$$
+
+`FindSet` follows parent pointers until reaching the root.
+
+Its running time depends on the height of the tree:
+
+$$
+\boxed{T_{\text{FindSet}}=O(h)}
+$$
+
+where $h$ is the height of the tree.
+
+**Union Operation:**
+
+To merge two sets, first find their representatives and then make the root of one tree a child of the root of the other.
+
+```text
+function Union(x, y)
+    xRoot = FindSet(x)
+    yRoot = FindSet(y)
+
+    if xRoot != yRoot then
+        yRoot.parent = xRoot
+    end if
+end function
+```
+
+The main problem is that repeatedly merging trees without considering their heights may produce a very tall tree.
+
+This makes future FindSet operations expensive.
+
+#### Weighted Union (Union By Height)
+
+To improve efficiency, we use **Union By Height**.
+
+The main idea is to attach the shorter tree to the taller tree.
+
+**Pseudocode:**
+
+```text
+function UnionByHeight(x, y)
+    xRoot = FindSet(x)
+    yRoot = FindSet(y)
+
+    if xRoot = yRoot then
+        return
+    end if
+
+    if xRoot.height > yRoot.height then
+        yRoot.parent = xRoot
+
+    else if yRoot.height > xRoot.height then
+        xRoot.parent = yRoot
+
+    else
+        yRoot.parent = xRoot
+        xRoot.height = xRoot.height + 1
+    end if
+end function
+```
+
+![Tree-Based Union-Find](img/tree_based_union_find.png)
+
+*Figure 6. Tree-Based Union-Find before and after Union(x7, x15), showing how the root of one tree becomes a child of the other root. Source: Professor Painter's CSE 2331 lecture notes.*
+
+**Important Observation:**
+
+- If the two trees have different heights, attaching the shorter tree to the taller tree does not increase the resulting height.
+- If the two trees have the same height, the resulting height increases by one.
+
+For a tree $T$ with height $h$:
+
+$$
+\boxed{size(T)\ge 2^h}
+$$
+
+Taking logarithms:
+
+$$
+h\le\log_2(size(T))
+$$
+
+Therefore:
+
+$$
+\boxed{h\le\log_2 n}
+$$
+
+This gives an upper bound on the tree height.
+
+Since FindSet follows parent pointers to the root:
+
+$$
+\boxed{T_{\text{FindSet}}\in O(\log n)}
+$$
+
+Consequently, Union By Height also requires at most:
+
+$$
+\boxed{T_{\text{UnionByHeight}}\in O(\log n)}
+$$
+
+#### Path Compression
+
+Although Union By Height limits the height of a tree, FindSet may still need to traverse multiple parent pointers.
+
+**Path Compression** improves future FindSet operations by making every node along the searched path point directly to the root.
+
+**Pseudocode:**
+
+```text
+function FindSetPathCompress(x)
+    if x.parent = x then
+        return x
+    else
+        z = FindSetPathCompress(x.parent)
+        x.parent = z
+        return z
+    end if
+end function
+```
+
+**Example:**
+
+![Path Compression](img/path_compression.png)
+
+*Figure 7. Tree-Based Union-Find before and after FindSetPathCompress(x3), showing how parent pointers along the path are updated to point directly to root x10. Source: Professor Painter's CSE 2331 lecture notes.*
+
+Before Path Compression:
+
+```text
+x1 (root)
+ |
+ x2
+ |
+ x3
+ |
+ x4
+```
+
+Calling `FindSetPathCompress(x4)` finds the root `x1` and updates the parent pointers along the path.
+
+After Path Compression:
+
+```text
+     x1 (root)
+   /  |  \
+ x2   x3  x4
+```
+
+**Key Observation:**
+
+Path Compression does not change which elements belong to the set or which element is the representative.
+
+It only modifies the parent pointers to make future searches more efficient.
+
+It is also important to note that compressing one path does not necessarily reduce the overall height of the entire tree.
+
+### Complexity Analysis
+
+The following table summarizes the main implementations discussed in Professor Painter's lecture notes.
+
+| Implementation | MakeSet | FindSet | Union |
+| --- | --- | --- | --- |
+| Basic Linked List | $\Theta(1)$ | $\Theta(1)$ | $\Theta(y.length)$ |
+| Weighted Linked List | $\Theta(1)$ | $\Theta(1)$ | $\Theta(\min(x.length,y.length))$ |
+| Basic Tree | $\Theta(1)$ | $O(h)$ | $O(\max(h_x,h_y))$ |
+| Union By Height | $\Theta(1)$ | $O(\log n)$ | $O(\log n)$ |
+
+**Further Optimization: Union By Rank and Path Compression**
+
+Instead of using the actual tree height, Union By Rank maintains a rank that provides an upper bound on the height.
+
+When combined with Path Compression, the amortized running time of a sequence of $m$ Union operations on $n$ elements can be bounded by:
+
+$$
+\boxed{O(m\alpha(n))}
+$$
+
+where $\alpha(n)$ is the **inverse Ackermann function**.
+
+Since $\alpha(n)$ grows extremely slowly, the amortized cost is nearly constant for practical input sizes.
+
+**Final Comparison:**
+
+- **Basic Linked List:** Simple FindSet, but Union may require updating many head pointers.
+- **Weighted Linked List:** Appends the shorter list to minimize head pointer updates.
+- **Basic Tree:** Uses parent pointers, but FindSet depends on tree height.
+- **Union By Height:** Attaches the shorter tree to the taller tree to limit height.
+- **Path Compression:** Makes nodes along a searched path point directly to the root.
+
+The key optimization principle is to reduce the amount of work required by future Union and FindSet operations.
 
 ## Reference List
 
