@@ -1,0 +1,211 @@
+# LeetCode – Nov 2026 | Day 5
+
+**Author:** Eric Zhou  
+**Email:** <eric_ds_zhou@outlook.com>  
+**Date:** Nov 12, 2026
+
+## Introduction
+
+This practice covers **LeetCode 350 - Intersection of Two Arrays II** using sorting and two pointers, and **LeetCode 169 - Majority Element** using two approaches: sorting with counting and the Boyer-Moore Voting Algorithm.
+
+## Leetcode 350 - Intersection of Two Arrays II
+
+### Question
+
+Given two integer arrays `nums1` and `nums2`, return their intersection. Each element must appear in the result as many times as it appears in **both** arrays. The result may be returned in any order.
+
+### Intuition
+
+Sort both arrays to bring equal elements together. Then use **two pointers** to find matches without repeatedly searching the arrays.
+
+### Approach
+
+- Sort `nums1` and `nums2`.
+- Use `i` and `j` to track the current positions in the two arrays.
+- Allocate an output array of length `Math.min(nums1.length, nums2.length)` and use `size` as the write index.
+- If both values match, store the value and advance both pointers.
+- Otherwise, advance the pointer whose value is smaller.
+- Return `Arrays.copyOf(result, size)` to remove unused output slots.
+
+### Time Complexity
+
+$$
+O(n\log n + m\log m)
+$$
+
+Sorting the two arrays takes $O(n\log n + m\log m)$ time, and the two-pointer scan takes $O(n+m)$ time.
+
+### Space Complexity
+
+$$
+O(\min(n,m))\text{ for the result array, excluding sorting overhead}
+$$
+
+The result buffer stores at most $\min(n,m)$ elements. Sorting may use additional implementation-dependent space.
+
+### Code
+
+```java
+import java.util.Arrays;
+
+class Solution {
+    public int[] intersect(int[] nums1, int[] nums2) {
+        Arrays.sort(nums1);
+        Arrays.sort(nums2);
+
+        int i = 0;
+        int j = 0;
+        int size = 0;
+        int[] result = new int[Math.min(nums1.length, nums2.length)];
+
+        while (i < nums1.length && j < nums2.length) {
+            if (nums1[i] == nums2[j]) {
+                result[size] = nums1[i];
+                size++;
+                i++;
+                j++;
+            } else if (nums1[i] < nums2[j]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+
+        return Arrays.copyOf(result, size);
+    }
+}
+```
+
+---
+
+## Leetcode 169 - Majority Element
+
+### Question
+
+Given an integer array `nums`, return the **majority element**: the value that appears **more than** $\lfloor n/2\rfloor$ times. The problem guarantees that a majority element exists.
+
+### Method 1 - Sorting + Counting
+
+#### Intuition
+
+My first solution was to sort the array so that equal elements appear consecutively. I then counted adjacent matches and tracked which group was the longest.
+
+#### Approach
+
+- Sort `nums` with `Arrays.sort(nums)`.
+- Set `j = 0` for the current group's **number of adjacent equal pairs**, `max = 0` for the largest count found, and `result = nums[0]`.
+- Starting at index `1`, compare `nums[i - 1]` with `nums[i]`.
+- If they match, increase `j`. Otherwise, update the best group if `j > max`, and reset `j`.
+- **After the loop**, compare the final group with `max` because the last group may never enter the `else` branch.
+
+Note that a group of $k$ equal elements produces `j = k - 1`; this works for comparing group lengths because every group is measured the same way.
+
+#### Time Complexity
+
+$$
+O(n\log n)
+$$
+
+Sorting dominates the linear scan.
+
+#### Space Complexity
+
+The counting logic itself uses $\Theta(1)$ extra space; `Arrays.sort(nums)` may use additional implementation-dependent space.
+
+#### Code
+
+```java
+import java.util.Arrays;
+
+class Solution {
+    public int majorityElement(int[] nums) {
+        int j = 0;
+        int max = 0;
+        int result = nums[0];
+
+        Arrays.sort(nums);
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i - 1] == nums[i]) {
+                j++;
+            } else {
+                if (max < j) {
+                    max = j;
+                    result = nums[i - 1];
+                }
+                j = 0;
+            }
+        }
+
+        if (max < j) {
+            max = j;
+            result = nums[nums.length - 1];
+        }
+
+        return result;
+    }
+}
+```
+
+### Method 2 - Boyer-Moore Voting Algorithm
+
+#### Intuition
+
+A majority element occurs more often than all **other** elements combined. We can cancel one occurrence of a candidate with one different value. Whenever the remaining vote count becomes zero, we start with a new candidate. Because the majority element is guaranteed to exist, it must survive these cancellations.
+
+#### Approach
+
+- Set `count = 0` and `candi = 0`.
+- Walk through `nums` once.
+- When `count == 0`, select the current number as the new candidate.
+- If the number equals the candidate, increment `count`; otherwise, decrement it.
+- Return the final candidate. No separate validation pass is necessary **because the problem guarantees a majority element**.
+
+#### Time Complexity
+
+$$
+\Theta(n)
+$$
+
+We examine every element exactly once.
+
+#### Space Complexity
+
+$$
+\Theta(1)
+$$
+
+We only keep two integer variables.
+
+#### Code
+
+```java
+class Solution {
+    public int majorityElement(int[] nums) {
+        int count = 0;
+        int candi = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            if (count == 0) {
+                candi = nums[i];
+            }
+
+            if (nums[i] == candi) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+
+        return candi;
+    }
+}
+```
+
+### Comparison
+
+| Method | Time Complexity | Extra Space |
+| --- | --- | --- |
+| Sorting + Counting | $O(n\log n)$ | $\Theta(1)$ for counting, plus sorting overhead |
+| Boyer-Moore Voting | $\Theta(n)$ | $\Theta(1)$ |
+
+**Additional observation:** After sorting, the guaranteed majority element must occupy index `nums.length / 2`, so a shorter sorting-based solution can return that element directly.
