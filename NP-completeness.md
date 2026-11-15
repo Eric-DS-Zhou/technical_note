@@ -1,36 +1,12 @@
 # NP-completeness
 
 **Author:** Eric Zhou  
-**Email:** <eric_ds_zhou@outlook.com>  
+**Email:** <eric_ds_zhou@outlook.com>
 **Date:** Nov 14, 2026
 
 ## Introduction
 
 This technical note summarizes the tools and logic used in NP-completeness
-
-## Table of contents
-
-- P, NP, NP-Complete, and NP-Hard
-- Optimization vs. Decision Problems
-- Common NP-Complete Problems
-- Proving a Problem is in NP
-- Proving a Problem is in P
-- Polynomial-Time Reductions
-  - Definition and Direction of Reduction
-  - If A ≤p B and B ∈ P, then A ∈ P
-  - If A ≤p B and A is NP-Complete, then B is NP-Hard
-  - Transitivity of Reduction
-- NP-Complete Problems in Detail
-  - Boolean Satisfiability and 3-SAT
-  - Independent Set# NP-Completeness
-
-**Author:** Eric Zhou  
-**Email:** <eric_ds_zhou@outlook.com>  
-**Date:** Nov 14, 2026
-
-## Introduction
-
-This technical note follows the CSE 2331 NP-Completeness lecture, focusing on **P, NP, NP-Complete, NP-Hard**, how to verify solutions in polynomial time, and how to prove NP-Completeness using polynomial-time reductions. Most examples concern **decision problems**: questions with a YES or NO answer. We use lecture definitions, examples, and the five-step proof structure.
 
 ## Table of Contents
 
@@ -55,7 +31,6 @@ This technical note follows the CSE 2331 NP-Completeness lecture, focusing on **
 - General Proof Template
 - Examples
   - Proving a Problem is in NP
-  - Constructing a Reduction
   - Proving NP-Completeness
 - Key Takeaways
 
@@ -113,20 +88,10 @@ If any NP-Complete problem could be solved in polynomial time, then $P=NP$. Whet
 
 ## Optimization vs. Decision Problems
 
-The lecture motivates NP-Completeness with the Travelling Salesman Problem (TSP).
+- **Optimization Problem:** Find the best possible solution.
+- **Decision Problem:** Determine whether a solution satisfying given conditions exists (Yes or No).
 
-**Optimization version:** Given a weighted graph and specified endpoints $v_1$ and $v_n$, find a minimum-weight path from $v_1$ to $v_n$ that visits every vertex exactly once.
-
-**Decision version:** Given the graph, endpoints, and a cost bound $C$, does such a path exist with total cost **less than $C$**?
-
-The lecture's example illustrates that choosing cheap edges greedily may fail: one proposed path has weight $41$, while another valid path has weight $36$.
-
-Classical approaches mentioned in the lecture include:
-
-- Brute force: approximately $O(n!)$.
-- Held–Karp dynamic programming: $O(n^2 2^n)$.
-
-Another related decision problem is **Hamiltonian Path**: Does a path exist from $v_1$ to $v_n$ visiting every vertex exactly once, without considering weights?
+NP-Completeness primarily focuses on **Decision Problems**.
 
 ## Common NP-Complete Problems
 
@@ -148,7 +113,7 @@ The lecture lists the following **decision problems** as key examples. The input
 | Set Packing | Are there at least $K$ mutually disjoint sets in the collection? |
 | Integer Programming | Is there an integer assignment satisfying all linear inequalities? |
 
-The lecture also mentions **decision TSP**, formulated with a path cost strictly less than $C$. Its problem list includes a footnote labeling that particular TSP formulation **NP-Hard**; we retain that qualification rather than silently treating its listing as a formal proof of NP-Completeness.
+The **Travelling Salesman Problem (TSP)** is originally an **optimization problem**, which aims to find the minimum-weight path and is **NP-Hard**. However, its **decision version**, which asks whether a path with total cost strictly less than $C$ exists, is **NP-Complete** because it is both NP-Hard and in NP.
 
 The detailed proofs in this note concern **SAT/3-SAT, Independent Set, Clique, Vertex Cover, and Set Cover**.
 
@@ -188,8 +153,6 @@ To show $Q\in P$, describe an algorithm that **solves the decision problem on ev
 **Example — Searching.** Given an array of length $n$ and a value $K$, examine each element until $K$ is found or the array ends. This answers whether $K$ exists in the array in $O(n)$ time. Thus this decision problem is in P.
 
 **Example — Minimum Spanning Tree (decision version).** Given a connected weighted graph and a bound $C$, ask whether it has a spanning tree of weight **at most $C$**. Compute an MST using Prim's or Kruskal's algorithm, then compare its weight to $C$. These are polynomial-time algorithms, so the decision version is in P.
-
-**Reminder from the lecture:** Trying all $K$-vertex subsets requires up to $O(K^2n^K)$ time. If $K$ is a **fixed constant**, this is polynomial in $n$, but if $K$ is part of the input then the exponent is variable; that method does **not** prove the general Independent Set problem is in P.
 
 ## Polynomial-Time Reductions
 
@@ -297,7 +260,20 @@ Given an assignment, evaluate every clause, then check whether all clauses are T
 
 #### Why 3-SAT Is NP-Complete
 
-The lecture outlines a polynomial-time conversion from a CNF formula to an equisatisfiable 3-CNF formula, introducing auxiliary variables for clauses with more than three literals. Combining this conversion with Cook's theorem establishes 3-SAT as NP-Complete. The lecture sketches a construction using an auxiliary variable $x_A$ to replace an OR of four literals by clauses of length three, then states that the general construction follows similarly.
+To prove that **3-SAT is NP-Complete**, we need to show:
+
+1. **3-SAT ∈ NP:** Given a truth assignment, we can verify whether every clause is satisfied in polynomial time.
+
+2. **SAT ≤p 3-SAT:** Since SAT is NP-Complete by Cook's Theorem, we reduce SAT to 3-SAT by converting a CNF formula into an equisatisfiable 3-CNF formula in polynomial time.
+
+For clauses containing more than three literals, we introduce auxiliary variables to split them into clauses of exactly three literals while preserving satisfiability.
+
+Therefore,
+
+$$
+\boxed{\text{3-SAT is NP-Complete}}
+$$
+
 
 **Important distinction:** **3-CNF** is a *formula format*; **3-SAT** is the *decision problem* concerning formulas in that format.
 
@@ -615,26 +591,6 @@ $$
 \boxed{\text{Vertex Cover}\in NP}.
 $$
 
-### Constructing a Reduction
-
-**Example from the lecture — Hamiltonian Path $\leq_p$ Decision TSP.**
-
-**Input to Hamiltonian Path:** $(G,v_1,v_n)$, with $n=|V|$.
-
-**Construction:** Give every existing edge of $G$ weight $1$, obtaining $G'$, and choose decision-TSP bound $C=n$.
-
-**Correctness:** Any path visiting all $n$ vertices exactly once uses $n-1$ edges, hence has weight $n-1<n$. Conversely, any valid TSP path with weight less than $n$ visits all vertices exactly once and uses the original edges, so it is a Hamiltonian path in $G$.
-
-Therefore,
-
-$$
-\text{Hamiltonian Path} \leq_p \text{Decision TSP}.
-$$
-
-**Why $C=n$?** A path visiting all $n$ vertices exactly once has **$n-1$ edges**. Giving every existing edge weight $1$ makes its total weight $n-1$, which is **strictly less** than $n$.
-
-This example illustrates the difference between **changing the instance** and **solving the instance**: we assign weights and a bound; we do not calculate the minimum path ourselves.
-
 ### Proving NP-Completeness
 
 **Question:** Prove that **Clique** is NP-Complete, using Independent Set as the known NP-Complete problem.
@@ -678,20 +634,7 @@ $$
 
 ---
 
-*Source: CSE 2331 — NP Completeness lecture notes, pp. 1–23. This note follows the lecture's definitions and reduction sequence; explanatory notation and a few expanded verification details are added for readability.*
+## Reference List
 
----
-
-*Source: CSE 2331 — NP Completeness lecture notes, pp. 1–23. Explanatory worked examples and proof checklists are added for studying; the lecture's problem statements and reduction directions are retained.*
-
-  - Clique
-    - Graph Complement
-  - Vertex Cover
-  - Set Cover
-- Reduction Summary
-- General Proof Template
-- Examples
-  - Proving a Problem is in NP
-  - Constructing a Reduction
-  - Proving NP-Completeness
-- Key Takeaways
+1. *"CSE2331_Midterm_6_Review"* Created by Professor Painter.
+2. *"CSE2331_Graph_Algorithm_Typed"* Created by Professor Painter.
